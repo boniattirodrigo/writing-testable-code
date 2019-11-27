@@ -1,5 +1,3 @@
-require 'pry'
-
 class EcommerceA
   module TrackProductAccess
     def self.call(id)

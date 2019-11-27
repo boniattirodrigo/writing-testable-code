@@ -1,35 +1,30 @@
 require_relative '../spec_helper'
 require_relative '../../src/track_product_access'
-require_relative '../../src/ecommerce_a/track_product_access'
-require_relative '../../src/ecommerce_b/track_product_access'
-require_relative '../../src/ecommerce_c/track_product_access'
+
+class StubbedEcommerce
+  module TrackProductAccess
+    def self.call(id)
+      'Tracking from a stubbed ecommerce'
+    end
+  end
+end
 
 describe TrackProductAccess do
   describe '#call' do
-    context 'when tracking from ecommerce A' do
-      it 'tracks product from ecommerce A' do
-        product = double('Product', :partner => 'EcommerceA', :id => 879)
+    context 'when tracking a product from existent ecommerce' do
+      it 'tracks product from correct ecommerce' do
+        product = double('Product', :partner => 'StubbedEcommerce', :id => 879)
 
-        expect(EcommerceA::TrackProductAccess).to receive(:call)
+        expect(StubbedEcommerce::TrackProductAccess).to receive(:call)
         TrackProductAccess.call(product)
       end
     end
 
-    context 'when tracking from ecommerce B' do
-      it 'tracks product from ecommerce B' do
-        product = double('Product', :partner => 'EcommerceB', :id => 879)
+    context 'when tracking a product from a nonexistent ecommerce' do
+      it 'raises an invalid ecommerce name error' do
+        product = double('Product', :partner => 'InvalidEcommerce', :id => 879)
 
-        expect(EcommerceB::TrackProductAccess).to receive(:call)
-        TrackProductAccess.call(product)
-      end
-    end
-
-    context 'when tracking from ecommerce C' do
-      it 'tracks product from ecommerce C' do
-        product = double('Product', :partner => 'EcommerceC', :id => 879)
-
-        expect(EcommerceC::TrackProductAccess).to receive(:call)
-        TrackProductAccess.call(product)
+        expect { TrackProductAccess.call(product) }.to raise_error(Exception)
       end
     end
   end
