@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <ul v-for="user in $store.state.users" v-bind:key="user" data-test="users-list">
+    <ul v-for="user in users" v-bind:key="user" data-test="users-list">
       <li>{{ user }}</li>
     </ul>
   </div>
@@ -9,8 +9,18 @@
 <script>
 export default {
   name: 'UsersList',
+  props: {
+    users: {
+      type: Array,
+      default: () => []
+    },
+    fetchUsers: {
+      type: Function,
+      default: () => {}
+    }
+  },
   mounted() {
-    this.$store.dispatch('fetchUsers')
+    this.fetchUsers()
   }
 }
 </script>
